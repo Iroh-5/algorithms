@@ -4,15 +4,9 @@
 
 /*
  * Radix sort algorithm implementation
+ * All input numbers should be unsigned 32-bit numbers
  * All 32-bit numbers are considered 4-digit numbers with 8-bit digit
 */
-
-// 11111111 11111111 11111111 11111111 
-//
-// 00000000 00000000 00000000 11111111 x & 0x000000FF
-// 00000000 00000000 11111111 00000000 x & 0x0000FF00
-// 00000000 11111111 00000000 00000000 x & 0x00FF0000
-// 11111111 00000000 00000000 00000000 x & 0xFF000000
 
 uint32_t get_digit(uint32_t x, int digit)
 {
@@ -32,7 +26,7 @@ void counting_sort(uint32_t* arr, int n, int digit)
 	cnt[i] += cnt[i - 1];
 
     uint32_t tmp[n];
-    for (int i = 0; i < n; ++i)
+    for (int i = n - 1; i >= 0; --i)
     {
 	tmp[cnt[get_digit(arr[i], digit)] - 1] = arr[i];
 	cnt[get_digit(arr[i], digit)]--;
@@ -42,13 +36,26 @@ void counting_sort(uint32_t* arr, int n, int digit)
 	arr[i] = tmp[i];
 }
 
+void radix_sort(uint32_t* arr, int size)
+{
+    for (int i = 0; i < 4; ++i)
+	counting_sort(arr, size, i);
+}
+
 int main(void)
 {
-    uint32_t arr[] = { 0xFFFFFFFF, 0xFFFFFFFE, 0xFFFFFFFD, 0xFFFFFFFC };
-    counting_sort(arr, 4, 0);
+    int n;
+    scanf("%d", &n);
 
-    for (int i = 0; i < 4; ++i)
-	printf("%X\n", arr[i]);
+    uint32_t arr[n];
+    for (int i = 0; i < n; ++i)
+	scanf("%u", &arr[i]);
+
+    radix_sort(arr, n);
+
+    for (int i = 0; i < n; ++i)
+	printf("%u ", arr[i]);
+    putchar('\n');
 
     return EXIT_SUCCESS;
 }
